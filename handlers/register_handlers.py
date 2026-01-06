@@ -25,6 +25,7 @@ class Register(StatesGroup):
 
 @register_router.message(F.text == "Register")
 async def start_register(message:Message, state:FSMContext):
+    state.clear()
     await state.set_state(Register.fullname)
     await state.update_data(chat_id = message.from_user.id)
     await state.update_data(username = message.from_user.username)
