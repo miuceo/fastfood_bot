@@ -4,9 +4,9 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 
-from .buttons import admin_kb, registered_kb, add_foods, inline_keyboard_foods, order_show, order_inline_kb, back_button
+from .buttons import admin_kb, registered_kb, add_foods, inline_keyboard_foods, order_show, order_inline_kb, back_button, register_kb
 
-from database import add_to_table, get_order_food, change_table, get_foods, get_comments, get_all_users
+from database import add_to_table, get_order_food, change_table, get_foods, get_comments, get_all_users, get_users
 
 from environs import Env
 env = Env()
@@ -32,7 +32,8 @@ class Edit_food(StatesGroup):
 async def start_admin(message:Message, state:FSMContext):
     await state.clear()
     id = str(message.from_user.id)
-    if str(ADMIN_ID) == id:
+    data = get_users(id)
+    if str(ADMIN_ID) == id and data is not None:
         await message.answer(
             text = 
             "🎛 <b>Admin Panel</b> ga xush kelibsiz!\n\n"
@@ -43,10 +44,16 @@ async def start_admin(message:Message, state:FSMContext):
         "👤 User panelga qaytish",
             reply_markup=admin_kb
         )
-    else:
+    elif data is not None:
         await message.answer(
             text = "Siz 🎛admin emasssiz, iltimos kerakli tugmani tanlang: ",
             reply_markup=registered_kb
+        )
+        
+    else:
+        await message.answer(
+            text='Siz ro\'yxatdan o\'tmagansiz!',
+            reply_markup=register_kb
         )
 
 
